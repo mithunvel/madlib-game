@@ -1,0 +1,391 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mystery Mad Libs</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            color: #667eea;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-style: italic;
+        }
+
+        .input-section {
+            display: none;
+        }
+
+        .input-section.active {
+            display: block;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .grammar-hint {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 0.85em;
+            margin-left: 8px;
+            font-weight: normal;
+        }
+
+        .grammar-info {
+            font-size: 0.85em;
+            color: #666;
+            margin-top: 4px;
+            font-style: italic;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 1em;
+            transition: all 0.3s ease;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: block;
+            margin: 30px auto 0;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.6);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .story-section {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .story-section.active {
+            display: block;
+        }
+
+        .story-content {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 30px;
+            border-radius: 15px;
+            line-height: 1.8;
+            font-size: 1.1em;
+            color: #333;
+            margin-bottom: 20px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #ffd700 0%, #ffed4e 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .category-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .category-btn {
+            background: white;
+            border: 3px solid #667eea;
+            padding: 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .category-btn:hover {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            transform: scale(1.05);
+        }
+
+        .start-screen {
+            text-align: center;
+        }
+
+        .start-screen.hidden {
+            display: none;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎭 Mystery Mad Libs 🎭</h1>
+        <p class="subtitle">Learn English grammar while creating hilarious stories!</p>
+
+        <div class="start-screen" id="startScreen">
+            <p style="margin-bottom: 20px; font-size: 1.1em;">Choose your story type:</p>
+            <div class="category-selector">
+                <div class="category-btn" onclick="selectCategory('mystery')">
+                    🔍 Mystery
+                </div>
+                <div class="category-btn" onclick="selectCategory('funny')">
+                    😂 Funny
+                </div>
+                <div class="category-btn" onclick="selectCategory('adventure')">
+                    🚀 Adventure
+                </div>
+            </div>
+        </div>
+
+        <div class="input-section" id="inputSection">
+            <div id="inputFields"></div>
+            <button class="btn" onclick="generateStory()">Create My Story! ✨</button>
+        </div>
+
+        <div class="story-section" id="storySection">
+            <div class="story-content" id="storyContent"></div>
+            <button class="btn" onclick="resetGame()">Play Again! 🔄</button>
+        </div>
+    </div>
+
+    <script>
+        const storyTemplates = {
+            mystery: [
+                {
+                    template: "Last night, I was <verb1> through the <adjective1> forest when I heard a strange sound. It was a <noun1> <gerund1> in the shadows! I decided to <verb2> <adverb1>, but then I discovered it was actually just a <noun2> trying to find its way home. What a <adjective2> mystery!",
+                    inputs: [
+                        { id: 'verb1', label: 'Verb (past tense)', hint: 'An action word in past tense', example: 'walked, ran, jumped' },
+                        { id: 'adjective1', label: 'Adjective', hint: 'A word that describes a noun', example: 'dark, spooky, beautiful' },
+                        { id: 'noun1', label: 'Noun', hint: 'A person, place, or thing', example: 'creature, shadow, monster' },
+                        { id: 'gerund1', label: 'Gerund', hint: 'A verb ending in -ing used as a noun', example: 'lurking, dancing, sleeping' },
+                        { id: 'verb2', label: 'Verb', hint: 'An action word', example: 'run, hide, investigate' },
+                        { id: 'adverb1', label: 'Adverb', hint: 'A word that describes how an action is done', example: 'quickly, carefully, slowly' },
+                        { id: 'noun2', label: 'Noun (animal)', hint: 'A type of animal', example: 'cat, owl, raccoon' },
+                        { id: 'adjective2', label: 'Adjective', hint: 'A descriptive word', example: 'silly, surprising, bizarre' }
+                    ]
+                },
+                {
+                    template: "Detective <noun1> was investigating the case of the missing <noun2>. The only clue was a <adjective1> <noun3> found <gerund1> near the building. After <gerund2> carefully, the detective decided to <verb1> the suspect who confessed <adverb1>. Case closed!",
+                    inputs: [
+                        { id: 'noun1', label: 'Noun (name)', hint: 'A person\'s name', example: 'Smith, Jones, Brown' },
+                        { id: 'noun2', label: 'Noun', hint: 'A thing that can be stolen', example: 'diamond, painting, treasure' },
+                        { id: 'adjective1', label: 'Adjective', hint: 'A descriptive word', example: 'torn, golden, ancient' },
+                        { id: 'noun3', label: 'Noun', hint: 'A small object', example: 'letter, button, key' },
+                        { id: 'gerund1', label: 'Gerund', hint: 'Verb + ing', example: 'lying, sitting, floating' },
+                        { id: 'gerund2', label: 'Gerund', hint: 'Verb + ing', example: 'thinking, searching, analyzing' },
+                        { id: 'verb1', label: 'Verb', hint: 'An action word', example: 'interrogate, question, confront' },
+                        { id: 'adverb1', label: 'Adverb', hint: 'Describes how', example: 'nervously, dramatically, quietly' }
+                    ]
+                }
+            ],
+            funny: [
+                {
+                    template: "My <adjective1> pet <noun1> loves <gerund1> every morning. Yesterday, it started <gerund2> <adverb1> and accidentally <verb1> my breakfast! I tried to stop it but ended up looking like a <adjective2> <noun2>!",
+                    inputs: [
+                        { id: 'adjective1', label: 'Adjective', hint: 'A funny descriptive word', example: 'silly, weird, goofy' },
+                        { id: 'noun1', label: 'Noun (animal)', hint: 'A type of pet', example: 'hamster, parrot, iguana' },
+                        { id: 'gerund1', label: 'Gerund', hint: 'Verb + ing', example: 'dancing, bouncing, spinning' },
+                        { id: 'gerund2', label: 'Gerund', hint: 'Verb + ing', example: 'singing, jumping, wiggling' },
+                        { id: 'adverb1', label: 'Adverb', hint: 'How the action happens', example: 'wildly, crazily, loudly' },
+                        { id: 'verb1', label: 'Verb (past tense)', hint: 'An action in the past', example: 'ate, destroyed, launched' },
+                        { id: 'adjective2', label: 'Adjective', hint: 'A silly descriptor', example: 'confused, dizzy, clumsy' },
+                        { id: 'noun2', label: 'Noun', hint: 'A thing or animal', example: 'penguin, robot, potato' }
+                    ]
+                },
+                {
+                    template: "At the <adjective1> restaurant, I ordered <adjective2> <noun1> with a side of <noun2>. The waiter started <gerund1> <adverb1> while taking my order. When the food arrived, it was <gerund2> on the plate! Now I'm known as the person who <verb1> at dinner!",
+                    inputs: [
+                        { id: 'adjective1', label: 'Adjective', hint: 'Describes a place', example: 'fancy, weird, magical' },
+                        { id: 'adjective2', label: 'Adjective', hint: 'Describes food', example: 'purple, sparkling, giant' },
+                        { id: 'noun1', label: 'Noun (food)', hint: 'A type of food', example: 'pizza, spaghetti, tacos' },
+                        { id: 'noun2', label: 'Noun (plural)', hint: 'Side dish items', example: 'gummy bears, feathers, socks' },
+                        { id: 'gerund1', label: 'Gerund', hint: 'Verb + ing', example: 'laughing, singing, dancing' },
+                        { id: 'adverb1', label: 'Adverb', hint: 'How something is done', example: 'awkwardly, loudly, weirdly' },
+                        { id: 'gerund2', label: 'Gerund', hint: 'Verb + ing', example: 'glowing, moving, flying' },
+                        { id: 'verb1', label: 'Verb (past tense)', hint: 'A silly action', example: 'screamed, danced, fainted' }
+                    ]
+                }
+            ],
+            adventure: [
+                {
+                    template: "I embarked on a quest to find the legendary <noun1> of <noun2>. After <gerund1> through <adjective1> mountains, I finally reached the ancient <noun3>. A <adjective2> guardian was <gerund2> at me. I had to <verb1> to claim the treasure!",
+                    inputs: [
+                        { id: 'noun1', label: 'Noun (object)', hint: 'A magical item', example: 'sword, crystal, crown' },
+                        { id: 'noun2', label: 'Noun (place)', hint: 'A mystical location', example: 'Atlantis, Wonderland, Narnia' },
+                        { id: 'gerund1', label: 'Gerund', hint: 'Verb + ing', example: 'climbing, hiking, trekking' },
+                        { id: 'adjective1', label: 'Adjective', hint: 'Describes mountains', example: 'treacherous, snowy, towering' },
+                        { id: 'noun3', label: 'Noun (building)', hint: 'A structure', example: 'temple, castle, cave' },
+                        { id: 'adjective2', label: 'Adjective', hint: 'Describes a character', example: 'fierce, ancient, wise' },
+                        { id: 'gerund2', label: 'Gerund', hint: 'Verb + ing', example: 'staring, glaring, watching' },
+                        { id: 'verb1', label: 'Verb', hint: 'An action to prove yourself', example: 'fight, solve, answer' }
+                    ]
+                }
+            ]
+        };
+
+        let currentCategory = '';
+        let currentStory = null;
+
+        function selectCategory(category) {
+            currentCategory = category;
+            const stories = storyTemplates[category];
+            currentStory = stories[Math.floor(Math.random() * stories.length)];
+            
+            document.getElementById('startScreen').classList.add('hidden');
+            document.getElementById('inputSection').classList.add('active');
+            
+            renderInputFields();
+        }
+
+        function renderInputFields() {
+            const inputFieldsDiv = document.getElementById('inputFields');
+            inputFieldsDiv.innerHTML = '';
+            
+            currentStory.inputs.forEach(input => {
+                const div = document.createElement('div');
+                div.className = 'input-group';
+                div.innerHTML = `
+                    <label>
+                        ${input.label}
+                        <span class="grammar-hint">${input.label.split(' ')[0]}</span>
+                    </label>
+                    <div class="grammar-info">💡 ${input.hint} (e.g., ${input.example})</div>
+                    <input type="text" id="${input.id}" placeholder="Enter your ${input.label.toLowerCase()}">
+                `;
+                inputFieldsDiv.appendChild(div);
+            });
+        }
+
+        function generateStory() {
+            let story = currentStory.template;
+            let allFilled = true;
+            
+            currentStory.inputs.forEach(input => {
+                const value = document.getElementById(input.id).value.trim();
+                if (!value) {
+                    allFilled = false;
+                } else {
+                    story = story.replace(`<${input.id}>`, `<span class="highlight">${value}</span>`);
+                }
+            });
+            
+            if (!allFilled) {
+                alert('Please fill in all the fields to create your story! 📝');
+                return;
+            }
+            
+            document.getElementById('inputSection').classList.remove('active');
+            document.getElementById('storySection').classList.add('active');
+            document.getElementById('storyContent').innerHTML = story;
+        }
+
+        function resetGame() {
+            document.getElementById('storySection').classList.remove('active');
+            document.getElementById('inputSection').classList.remove('active');
+            document.getElementById('startScreen').classList.remove('hidden');
+            
+            currentCategory = '';
+            currentStory = null;
+        }
+    </script>
+</body>
+</html>
